@@ -5,17 +5,15 @@
  */
 package com.umg.so.processmanager;
 
-import com.umg.os.processmanager.process.ReadFileThread;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Random;
-import static javafx.scene.input.KeyCode.T;
 
 /**
  *
  * @author Ronaldo Lemus
  */
+
 public class ProcessMaganer {
 
     private List<Object> ThreadList;
