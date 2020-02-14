@@ -19,15 +19,24 @@ import javax.swing.table.DefaultTableModel;
  */
 public class UIProcess extends javax.swing.JFrame implements Runnable {
 
+    List<Object[]> listObjs = new ArrayList<>();
+    DefaultTableModel model;
+    UIMedia runMedia = new UIMedia();
+    UIProcessReadFile runFile = new UIProcessReadFile();
+    static Thread hiloPrincipal;
+
     /**
      * Creates new form UIProcess
      */
     public UIProcess() {
         initComponents();
+        
         this.processTable.setFocusable(false);
+        this.btnStart.setEnabled(false);
         this.processTable.setCellSelectionEnabled(false);
         this.processTable.setAutoCreateRowSorter(false);
         this.processTable.getTableHeader().setEnabled(false);
+        this.loadInit();
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -57,7 +66,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        btnStart = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         processTable = new javax.swing.JTable();
@@ -72,7 +81,13 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Procesos");
 
-        jButton2.setText("Iniciar");
+        btnStart.setText("Iniciar");
+        btnStart.setEnabled(false);
+        btnStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStartActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -82,7 +97,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 831, Short.MAX_VALUE)
-                .addComponent(jButton2)
+                .addComponent(btnStart)
                 .addGap(24, 24, 24))
         );
         jPanel1Layout.setVerticalGroup(
@@ -91,7 +106,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jButton2))
+                    .addComponent(btnStart))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
@@ -175,8 +190,17 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
+
+        // TODO add your handling code here:
+        if(hiloPrincipal != null){
+            hiloPrincipal.start();
+            this.btnStart.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnStartActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnStart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
@@ -185,36 +209,13 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
     // End of variables declaration//GEN-END:variables
     public static void main(String args[]) {
         UIProcess UIPrincipal = new UIProcess();
-        Thread hiloPrincipal = new Thread(UIPrincipal);
-        hiloPrincipal.start();
+        hiloPrincipal = new Thread(UIPrincipal);
         UIPrincipal.setVisible(true);
-
-//        Thread hilo = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                
-//            }
-//
-//        });
-//
-//        Thread hilo2 = new Thread(new UIProcessReadFile().showMe());
-//        hilo.start();
-//        hilo2.start();
     }
 
     @Override
     public void run() {
-        List<Object[]> listObjs = new ArrayList<>();
-        DefaultTableModel model = (DefaultTableModel) this.processTable.getModel();
-        UIMedia runMedia = new UIMedia();
-        UIProcessReadFile runFile = new UIProcessReadFile();
 
-        listObjs.add(new Object[]{1, runMedia.getProcessModel().getName(), runMedia.getProcessModel().getDescription(), runMedia.getProcessModel().getStatusString(), 0});
-        listObjs.add(new Object[]{2, runFile.getProcessModel().getName(), runFile.getProcessModel().getDescription(), runFile.getProcessModel().getStatusString(), 0});
-        for (Object[] ob : listObjs) {
-            model.addRow(ob);
-        }
-        int o = 0;
         try {
             new Thread(runMedia).start();
             new Thread(runFile).start();
@@ -243,24 +244,24 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
                 for (int i = 0; i < model.getDataVector().size(); i++) {
                     Vector ok = (Vector) model.getDataVector();
                     Vector ok2 = new Vector();
-                    switch (i+1) {
+                    switch (i + 1) {
                         case 1:
-                            ok2.add(i+1);
+                            ok2.add(i + 1);
                             ok2.add(runMedia.getProcessModel().getName());
                             ok2.add(runMedia.getProcessModel().getDescription());
                             ok2.add(runMedia.getProcessModel().getStatusString());
-                            if (pid == i+1) {
+                            if (pid == i + 1) {
                                 ok2.add(time / 1000);
                             } else {
                                 ok2.add(0);
                             }
                             break;
                         case 2:
-                            ok2.add(i+1);
+                            ok2.add(i + 1);
                             ok2.add(runFile.getProcessModel().getName());
                             ok2.add(runFile.getProcessModel().getDescription());
                             ok2.add(runFile.getProcessModel().getStatusString());
-                            if (pid == i+1) {
+                            if (pid == i + 1) {
                                 ok2.add(time / 1000);
                             } else {
                                 ok2.add(0);
@@ -272,14 +273,23 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
                     ok.set(i, ok2);
                 }
                 model.fireTableDataChanged();
-
                 time -= 100;
                 Thread.sleep(100L);
-                o++;
             }
         } catch (InterruptedException ex) {
             Logger.getLogger(UIProcess.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void loadInit() {
+        
+        this.model = (DefaultTableModel) this.processTable.getModel();
+        listObjs.add(new Object[]{1, runMedia.getProcessModel().getName(), runMedia.getProcessModel().getDescription(), runMedia.getProcessModel().getStatusString(), 0});
+        listObjs.add(new Object[]{2, runFile.getProcessModel().getName(), runFile.getProcessModel().getDescription(), runFile.getProcessModel().getStatusString(), 0});
+        for (Object[] ob : listObjs) {
+            model.addRow(ob);
+        }
+        this.btnStart.setEnabled(true);
     }
 
 }
