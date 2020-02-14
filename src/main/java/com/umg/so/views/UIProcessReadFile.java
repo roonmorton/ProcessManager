@@ -61,7 +61,6 @@ public class UIProcessReadFile extends javax.swing.JFrame implements Runnable {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtContent = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Lectura de Archivo");
         setBackground(new java.awt.Color(0, 0, 0));
         setLocation(new java.awt.Point(10, 10));

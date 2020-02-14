@@ -24,6 +24,10 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
      */
     public UIProcess() {
         initComponents();
+        this.processTable.setFocusable(false);
+        this.processTable.setCellSelectionEnabled(false);
+        this.processTable.setAutoCreateRowSorter(false);
+        this.processTable.getTableHeader().setEnabled(false);
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -60,6 +64,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(26, 188, 156));
 
@@ -76,7 +81,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 831, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addGap(24, 24, 24))
         );
@@ -93,7 +98,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
 
         processTable.setAutoCreateRowSorter(true);
-        processTable.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        processTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         processTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -117,10 +122,22 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
                 return canEdit [columnIndex];
             }
         });
+        processTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        processTable.setFocusable(false);
         processTable.setGridColor(new java.awt.Color(255, 255, 255));
         processTable.setSelectionBackground(new java.awt.Color(149, 165, 166));
         processTable.setSelectionForeground(new java.awt.Color(153, 153, 153));
+        processTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        processTable.getTableHeader().setResizingAllowed(false);
+        processTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(processTable);
+        if (processTable.getColumnModel().getColumnCount() > 0) {
+            processTable.getColumnModel().getColumn(0).setHeaderValue("No");
+            processTable.getColumnModel().getColumn(1).setHeaderValue("Nombre");
+            processTable.getColumnModel().getColumn(2).setHeaderValue("Descripción");
+            processTable.getColumnModel().getColumn(3).setHeaderValue("Estado");
+            processTable.getColumnModel().getColumn(4).setHeaderValue("En ejecución");
+        }
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -128,13 +145,14 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -149,11 +167,12 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -167,8 +186,9 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
     public static void main(String args[]) {
         UIProcess UIPrincipal = new UIProcess();
         Thread hiloPrincipal = new Thread(UIPrincipal);
-        UIPrincipal.setVisible(true);
         hiloPrincipal.start();
+        UIPrincipal.setVisible(true);
+
 //        Thread hilo = new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -186,21 +206,19 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
     public void run() {
         List<Object[]> listObjs = new ArrayList<>();
         DefaultTableModel model = (DefaultTableModel) this.processTable.getModel();
-        UIProcessReadFile uifile = new UIProcessReadFile();
+        UIMedia runMedia = new UIMedia();
+        UIProcessReadFile runFile = new UIProcessReadFile();
 
-        listObjs.add(new Object[]{1, uifile.getProcessModel().getName(), uifile.getProcessModel().getDescription(), uifile.getProcessModel().getStatusString(), 1});
-
-        model.addRow(listObjs.get(0));
+        listObjs.add(new Object[]{1, runMedia.getProcessModel().getName(), runMedia.getProcessModel().getDescription(), runMedia.getProcessModel().getStatusString(), 0});
+        listObjs.add(new Object[]{2, runFile.getProcessModel().getName(), runFile.getProcessModel().getDescription(), runFile.getProcessModel().getStatusString(), 0});
+        for (Object[] ob : listObjs) {
+            model.addRow(ob);
+        }
         int o = 0;
         try {
-            UIMedia runMedia = new UIMedia();
-            UIProcessReadFile runFile = new UIProcessReadFile();
-
             new Thread(runMedia).start();
             new Thread(runFile).start();
-
             Random rand = new Random();
-
             int pid = 0;
             int time = 0;
             while (true) {
@@ -208,42 +226,56 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
                     time = rand.nextInt(5000) + 1000;
                     pid = rand.nextInt(2) + 1;
                 }
-
                 switch (pid) {
                     case 1:
                         runFile.pause();
                         runMedia.go();
                         break;
-
                     case 2:
                         runMedia.pause();
                         runFile.go();
-
                         break;
-
                     case 3:
                         runFile.pause();
                         runMedia.pause();
                         break;
                 }
-                time -= 100;
-//                for (int i = 0; i < model.getDataVector().size(); i++) {
-//                   
-//                    Vector ok = (Vector) model.getDataVector();
-//
-//                    Vector ok2 = new Vector();
-//                    ok2.add("Columna1" + o);
-//                    ok2.add("Columna2" + o);
-//                    ok2.add("Columna3" + o);
-//                    ok2.add("Columna4" + o);
-//                    ok2.add("Columna5" + o);
-//                    ok.set(i, ok2);
-//                }
-//                model.fireTableDataChanged();
+                for (int i = 0; i < model.getDataVector().size(); i++) {
+                    Vector ok = (Vector) model.getDataVector();
+                    Vector ok2 = new Vector();
+                    switch (i+1) {
+                        case 1:
+                            ok2.add(i+1);
+                            ok2.add(runMedia.getProcessModel().getName());
+                            ok2.add(runMedia.getProcessModel().getDescription());
+                            ok2.add(runMedia.getProcessModel().getStatusString());
+                            if (pid == i+1) {
+                                ok2.add(time / 1000);
+                            } else {
+                                ok2.add(0);
+                            }
+                            break;
+                        case 2:
+                            ok2.add(i+1);
+                            ok2.add(runFile.getProcessModel().getName());
+                            ok2.add(runFile.getProcessModel().getDescription());
+                            ok2.add(runFile.getProcessModel().getStatusString());
+                            if (pid == i+1) {
+                                ok2.add(time / 1000);
+                            } else {
+                                ok2.add(0);
+                            }
+                            break;
+                        case 3:
+                            break;
+                    }
+                    ok.set(i, ok2);
+                }
+                model.fireTableDataChanged();
 
+                time -= 100;
                 Thread.sleep(100L);
                 o++;
-
             }
         } catch (InterruptedException ex) {
             Logger.getLogger(UIProcess.class.getName()).log(Level.SEVERE, null, ex);
