@@ -196,8 +196,11 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                String pathVideo = "file://" + System.getProperty("user.dir") + "/video.mp4";
+                System.out.println("file://" + System.getProperty("user.dir") + "/video.mp4");
                 File file = new File("video.mp4");
-                oracleVid = new MediaPlayer(
+                oracleVid = 
+                        new MediaPlayer(
                         new Media(file.toURI().toString())
                 );
                 //se añade video al jfxPanel
