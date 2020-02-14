@@ -196,10 +196,13 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                String pathVideo = "file://" + System.getProperty("user.dir") + "/video.mp4";
+                System.out.println("file://" + System.getProperty("user.dir") + "/video.mp4");
                 File file = new File("video.mp4");
-                oracleVid = new MediaPlayer(
-                        new Media(file.toURI().toString())
-                );
+                oracleVid
+                        = new MediaPlayer(
+                                new Media(file.toURI().toString())
+                        );
                 //se añade video al jfxPanel
                 jfxPanel.setScene(new Scene(new Group(new MediaView(oracleVid))));
                 oracleVid.setVolume(0.7);//volumen
@@ -224,12 +227,16 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
     }
 
     public void pause() {
-        this.setVisible(false);
+        if (this.isVisible()) {
+            this.setVisible(false);
+        }
         this.process.setStatus(1);
     }
 
     public void go() {
-        this.setVisible(true);
+        if (!this.isVisible()) {
+            this.setVisible(true);
+        }
         this.process.setStatus(2);
     }
 
@@ -253,15 +260,17 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
             while (process.getStatusCode() != 3) {
                 if (process.getStatusCode() == 2) {
                     if (oracleVid != null) {
-                        
+
                         this.oracleVid.play();
                     }
                 } else if (process.getStatusCode() == 1 && oracleVid != null) {
                     this.oracleVid.pause();
                 }
+                if (oracleVid != null) {
+                    this.txTime.setText(String.valueOf(Math.round(oracleVid.getCurrentTime().toSeconds())) + " Seg");
+                }
                 Thread.sleep(100L);
-                if(oracleVid != null)
-                this.txTime.setText( String.valueOf(Math.round(oracleVid.getCurrentTime().toSeconds())) + " Seg" );
+
 //                i += 100;
 //                if (i == 10000) {
 //                    this.oracleVid.pause();

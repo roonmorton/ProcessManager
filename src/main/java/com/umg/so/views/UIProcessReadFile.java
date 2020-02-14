@@ -145,13 +145,13 @@ public class UIProcessReadFile extends javax.swing.JFrame implements Runnable {
         try {
             while (this.process.getStatusCode() != 3) {
                 if (this.process.getStatusCode() == 2) {
-                        c = br.read();
-                        if (c == -1) {
-                            this.process.setStatus(3);
-                            this.txtContent.append("\nFin de lectura...");
-                        } else {
-                            this.txtContent.append("" + (char) c);
-                        }
+                    c = br.read();
+                    if (c == -1) {
+                        this.process.setStatus(3);
+                        this.txtContent.append("\nFin de lectura...");
+                    } else {
+                        this.txtContent.append("" + (char) c);
+                    }
                 }
                 Thread.sleep(100L);
             }
@@ -184,16 +184,18 @@ public class UIProcessReadFile extends javax.swing.JFrame implements Runnable {
         this.setVisible(false);
         return this;
     }
-    
+
     public void pause() {
-        this.setVisible(false);
+        if (this.isVisible()) {
+            this.setVisible(false);
+        }
         this.process.setStatus(1);
     }
 
-   
-
     public void go() {
-        this.setVisible(true);
+        if (!this.isVisible()) {
+            this.setVisible(true);
+        }
         this.process.setStatus(2);
     }
 
