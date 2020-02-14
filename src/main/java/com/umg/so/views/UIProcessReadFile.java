@@ -5,17 +5,45 @@
  */
 package com.umg.so.views;
 
+import com.umg.so.processmanager.models.ProcessModel;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Ronaldo Lemus
  */
-public class UIProcessReadFile extends javax.swing.JFrame {
+public class UIProcessReadFile extends javax.swing.JFrame implements Runnable {
+
+    private ProcessModel process;
+    private String fileName;
+    private FileReader fr;
+    private BufferedReader br;
+    private File archivo;
 
     /**
      * Creates new form UIProcessOne
      */
     public UIProcessReadFile() {
         initComponents();
+        this.process = new ProcessModel("File Reader", "Lectura de Archivo");
+        fileName = "file.txt";
+        this.txtContent.setLineWrap(true);
+        try {
+            // Apertura del fichero y creacion de BufferedReader para poder
+            // hacer una lectura comoda (disponer del metodo readLine()).
+            archivo = new File(fileName);
+            fr = new FileReader(archivo);
+            br = new BufferedReader(fr);
+            this.txtContent.append("Archivo abierto...\n\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.txtContent.append("\nNo se pudo abrir el archivo");
+        }
     }
 
     /**
@@ -37,6 +65,7 @@ public class UIProcessReadFile extends javax.swing.JFrame {
         setTitle("Lectura de Archivo");
         setBackground(new java.awt.Color(0, 0, 0));
         setLocation(new java.awt.Point(10, 10));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -52,7 +81,7 @@ public class UIProcessReadFile extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addContainerGap(337, Short.MAX_VALUE))
+                .addContainerGap(508, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -63,7 +92,7 @@ public class UIProcessReadFile extends javax.swing.JFrame {
         );
 
         txtContent.setEditable(false);
-        txtContent.setColumns(20);
+        txtContent.setColumns(1);
         txtContent.setRows(5);
         jScrollPane1.setViewportView(txtContent);
 
@@ -81,8 +110,8 @@ public class UIProcessReadFile extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -108,4 +137,53 @@ public class UIProcessReadFile extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtContent;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void run() {
+        int c;
+        this.process.setStatus(2);
+        System.out.println("Code: " + this.process.getStatusCode());
+        try {
+            while (this.process.getStatusCode() != 3) {
+                if (this.process.getStatusCode() == 2) {
+                        c = br.read();
+                        if (c == -1) {
+                            this.process.setStatus(3);
+                            this.txtContent.append("\nFin de lectura...");
+                        } else {
+                            this.txtContent.append("" + (char) c);
+                        }
+                }
+                Thread.sleep(100L);
+            }
+        } catch (Exception e) {
+            this.process.setStatus(3);
+            e.printStackTrace();
+            this.txtContent.append("\nOcurrio un error en la lectura... " + e.getMessage());
+        } finally {
+            try {
+                if (null != fr) {
+                    fr.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+
+    }
+
+    public ProcessModel getProcessModel() {
+        return this.process;
+    }
+
+    public UIProcessReadFile showMe() {
+        this.setVisible(true);
+        return this;
+    }
+
+    public UIProcessReadFile hideMe() {
+        this.setVisible(false);
+        return this;
+    }
+
 }

@@ -15,22 +15,8 @@ public final class ProcessModel {
     private int status;
     private String description;
     private final long timeStamp;
-    private boolean doStop = false;
-    private Thread task;
-
-    public Thread getTask() {
-        return task;
-    }
-
-    public void setTask(Thread task) {
-        this.task = task;
-    }
-
-    public void init() {
-        if (task != null) {
-            this.task.start();
-        }
-    }
+    private boolean doStop;
+    
 
     public synchronized void doStop() {
         this.doStop = true;
@@ -40,13 +26,12 @@ public final class ProcessModel {
         return this.doStop == false;
     }
 
-    public ProcessModel(String name, String description, Thread task) {
+    public ProcessModel(String name, String description) {
         this.status = 0;
         this.description = description;
         this.name = name;
         this.timeStamp = System.currentTimeMillis();
-        this.task = task;
-        this.init();
+        this.doStop = false;
     }
 
     public String getName() {
@@ -65,8 +50,8 @@ public final class ProcessModel {
         this.status = estado;
     }
 
-    public String getStatus() {
-        return description;
+    public int getStatusCode() {
+        return this.status;
     }
 
     public String getStatusString() {
@@ -77,6 +62,8 @@ public final class ProcessModel {
                 return "Pausado";
             case 2:
                 return "Ejecucion";
+            case 3: 
+                return "Finalizado";
             default:
                 return "Na/na";
         }

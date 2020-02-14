@@ -16,23 +16,5 @@ public class main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-      Thread hilo = new Thread(new Runnable(){
-          @Override
-          public void run() {
-              new UIProcess().setVisible(true);
-          }
-          
-      });
-        
-      Thread hilo2 = new Thread(new Runnable(){
-          @Override
-          public void run() {
-              new UIProcessReadFile().setVisible(true);
-          }
-          
-      });
-      hilo.start();
-      hilo2.start();
-    }
+    
 }
