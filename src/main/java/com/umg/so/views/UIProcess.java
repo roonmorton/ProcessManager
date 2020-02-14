@@ -7,6 +7,7 @@ package com.umg.so.views;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -192,23 +193,54 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
         model.addRow(listObjs.get(0));
         int o = 0;
         try {
+            UIMedia runMedia = new UIMedia();
+            UIProcessReadFile runFile = new UIProcessReadFile();
 
+            new Thread(runMedia).start();
+            new Thread(runFile).start();
+
+            Random rand = new Random();
+
+            int pid = 0;
+            int time = 0;
             while (true) {
-
-                for (int i = 0; i < model.getDataVector().size(); i++) {
-                   
-                    Vector ok = (Vector) model.getDataVector();
-
-                    Vector ok2 = new Vector();
-                    ok2.add("Columna1" + o);
-                    ok2.add("Columna2" + o);
-                    ok2.add("Columna3" + o);
-                    ok2.add("Columna4" + o);
-                    ok2.add("Columna5" + o);
-                    ok.set(i, ok2);
+                if (time <= 0) {
+                    time = rand.nextInt(5000) + 1000;
+                    pid = rand.nextInt(2) + 1;
                 }
-                model.fireTableDataChanged();
-                
+
+                switch (pid) {
+                    case 1:
+                        runFile.pause();
+                        runMedia.go();
+                        break;
+
+                    case 2:
+                        runMedia.pause();
+                        runFile.go();
+
+                        break;
+
+                    case 3:
+                        runFile.pause();
+                        runMedia.pause();
+                        break;
+                }
+                time -= 100;
+//                for (int i = 0; i < model.getDataVector().size(); i++) {
+//                   
+//                    Vector ok = (Vector) model.getDataVector();
+//
+//                    Vector ok2 = new Vector();
+//                    ok2.add("Columna1" + o);
+//                    ok2.add("Columna2" + o);
+//                    ok2.add("Columna3" + o);
+//                    ok2.add("Columna4" + o);
+//                    ok2.add("Columna5" + o);
+//                    ok.set(i, ok2);
+//                }
+//                model.fireTableDataChanged();
+
                 Thread.sleep(100L);
                 o++;
 

@@ -161,7 +161,6 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
 //        new Thread(media).start();
 //
 //    }
-
     private void playVideo() {
         Platform.runLater(new Runnable() {
             @Override
@@ -190,6 +189,16 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
         return this.process;
     }
 
+    public void pause() {
+        this.setVisible(false);
+        this.process.setStatus(1);
+    }
+
+    public void go() {
+        this.setVisible(true);
+        this.process.setStatus(2);
+    }
+
     public UIMedia showMe() {
         this.setVisible(true);
         return this;
@@ -203,23 +212,27 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
     @Override
     public void run() {
         //process.setStatus(2);
-        int i = 0;
+        //int i = 0;
         System.out.println("Code: " + process.getStatusCode());
         try {
             while (process.getStatusCode() != 3) {
                 if (process.getStatusCode() == 2) {
                     if (oracleVid == null) {
                         playVideo();
+                    } else {
+                        this.oracleVid.play();
                     }
-                }
-                Thread.sleep(100L);
-                i += 100;
-                if(i == 10000){
+                } else if (process.getStatusCode() == 1) {
                     this.oracleVid.pause();
                 }
-                if(i == 15000){
-                    this.oracleVid.play();
-                }
+                Thread.sleep(100L);
+//                i += 100;
+//                if (i == 10000) {
+//                    this.oracleVid.pause();
+//                }
+//                if (i == 15000) {
+//                    this.oracleVid.play();
+//                }
             }
         } catch (Exception e) {
             process.setStatus(3);

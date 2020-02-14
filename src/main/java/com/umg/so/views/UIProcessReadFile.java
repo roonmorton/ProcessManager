@@ -185,5 +185,17 @@ public class UIProcessReadFile extends javax.swing.JFrame implements Runnable {
         this.setVisible(false);
         return this;
     }
+    
+    public void pause() {
+        this.setVisible(false);
+        this.process.setStatus(1);
+    }
+
+   
+
+    public void go() {
+        this.setVisible(true);
+        this.process.setStatus(2);
+    }
 
 }
