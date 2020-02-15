@@ -23,6 +23,8 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
     DefaultTableModel model;
     UIMedia runMedia = new UIMedia();
     UIProcessReadFile runFile = new UIProcessReadFile();
+    UIFibonacci runFibonacci = new UIFibonacci();
+
     static Thread hiloPrincipal;
 
     /**
@@ -30,7 +32,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
      */
     public UIProcess() {
         initComponents();
-        
+
         this.processTable.setFocusable(false);
         this.btnStart.setEnabled(false);
         this.processTable.setCellSelectionEnabled(false);
@@ -193,7 +195,7 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
 
         // TODO add your handling code here:
-        if(hiloPrincipal != null){
+        if (hiloPrincipal != null) {
             hiloPrincipal.start();
             this.btnStart.setEnabled(false);
         }
@@ -219,26 +221,31 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
         try {
             new Thread(runMedia).start();
             new Thread(runFile).start();
+            new Thread(runFibonacci).start();
             Random rand = new Random();
             int pid = 0;
             int time = 0;
             while (true) {
-                if (time <= 0) {
-                    time = rand.nextInt(5000) + 1000;
-                    pid = rand.nextInt(2) + 1;
+                if (time <= 1) {
+                    time = (rand.nextInt(6) + 2) * 1000; // numero aleatorio que va de dos hasta 6 segundos
+                    pid = rand.nextInt(3) + 1;
+                    System.out.println(time);
                 }
                 switch (pid) {
                     case 1:
                         runFile.pause();
+                        runFibonacci.pause();
                         runMedia.go();
                         break;
                     case 2:
                         runMedia.pause();
+                        runFibonacci.pause();
                         runFile.go();
                         break;
                     case 3:
                         runFile.pause();
                         runMedia.pause();
+                        runFibonacci.go();
                         break;
                 }
                 for (int i = 0; i < model.getDataVector().size(); i++) {
@@ -268,13 +275,23 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
                             }
                             break;
                         case 3:
+                            ok2.add(i + 1);
+                            ok2.add(runFibonacci.getProcessModel().getName());
+                            ok2.add(runFibonacci.getProcessModel().getDescription());
+                            ok2.add(runFibonacci.getProcessModel().getStatusString());
+                            if (pid == i + 1) {
+                                ok2.add(time / 1000);
+                            } else {
+                                ok2.add(0);
+                            }
                             break;
                     }
                     ok.set(i, ok2);
                 }
                 model.fireTableDataChanged();
-                time -= 100;
                 Thread.sleep(100L);
+                time -= 100;
+
             }
         } catch (InterruptedException ex) {
             Logger.getLogger(UIProcess.class.getName()).log(Level.SEVERE, null, ex);
@@ -282,10 +299,12 @@ public class UIProcess extends javax.swing.JFrame implements Runnable {
     }
 
     public void loadInit() {
-        
+
         this.model = (DefaultTableModel) this.processTable.getModel();
         listObjs.add(new Object[]{1, runMedia.getProcessModel().getName(), runMedia.getProcessModel().getDescription(), runMedia.getProcessModel().getStatusString(), 0});
         listObjs.add(new Object[]{2, runFile.getProcessModel().getName(), runFile.getProcessModel().getDescription(), runFile.getProcessModel().getStatusString(), 0});
+        listObjs.add(new Object[]{3, runFibonacci.getProcessModel().getName(), runFibonacci.getProcessModel().getDescription(), runFibonacci.getProcessModel().getStatusString(), 0});
+
         for (Object[] ob : listObjs) {
             model.addRow(ob);
         }

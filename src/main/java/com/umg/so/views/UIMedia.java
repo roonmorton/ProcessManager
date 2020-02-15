@@ -39,11 +39,7 @@ public class UIMedia extends javax.swing.JFrame implements Runnable {
         panelVideo.setLayout(new BorderLayout());
         panelVideo.add(jfxPanel, BorderLayout.CENTER);
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UIMedia.class.getName()).log(Level.SEVERE, null, ex);
-        }
+      
     }
 
     /**
